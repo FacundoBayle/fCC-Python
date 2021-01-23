@@ -46,4 +46,48 @@ class Category:
 def create_spend_chart(categories):
     graph = "Percentage spent by category" + "\n"
 
+    category_names = []
+    spent = []
+    spent_percents = []
+
+    for category in categories: 
+        total = 0
+        for i in category.ledger:
+            if i['amount'] < 0:
+                total -= i['amount']
+        spent.append(round(total, 2))
+        category_names.append(category.name)
+
+    for percents in spent:
+        spent_percents.append(round(percents/sum(spent), 2)*100)
+
+    axis = range(100,-10,-10)
+
+    for label in axis: 
+        graph += str(label).rjust(3) + "| "
+        for percents in spent_percents:
+            if percents >= label:
+                graph += "o  "
+            else:
+                graph += "   "
+        graph += "\n"
+                                                
+    graph += "    ----" + ("---" * (len(category_names) - 1))
+    graph += "\n     "
+
+    len_longest = 0
+    
+    for names in category_names:
+        if len_longest < len(names):
+            len_longest = len(names)
+
+    for i in range(len_longest):
+        for names in category_names:
+            if len(names) > i:
+                graph += names[i] + "  "
+            else:
+                graph += "   "
+        if i < len_longest - 1:
+            graph += "\n     "
+
     return graph
